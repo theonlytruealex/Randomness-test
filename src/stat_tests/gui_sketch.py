@@ -26,6 +26,9 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
         self.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8, 9), weight=1)
+        
+        # set default font to be used for the app...
+        self.DEFAULT_FONT = customtkinter.CTkFont(family="Calibri", size=15)
 
         # create sidebar frame with widgets
         self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
@@ -53,10 +56,13 @@ class App(customtkinter.CTk):
                                                                command=self.change_scaling_event)
         self.scaling_optionemenu.grid(row=9, column=0, padx=20, pady=(10, 20))
 
+        # should be created a new frame for the right hand of the gui 
+        # to be implemented...
+        
         # create textbox
         self.main_label = customtkinter.CTkLabel(self,
         text_color="black",
-        font=("Times New Roman", 20),
+        font=self.DEFAULT_FONT,
         text = "Select the desired Randomness Test")
         self.main_label.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
