@@ -9,6 +9,7 @@ import monobit
 import mbit
 import autocorrelation
 import serial
+import runs
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -20,7 +21,7 @@ class App(customtkinter.CTk):
 
         # configure window
         self.title("gui_sketch.py")
-        self.geometry(f"{800}x{580}")
+        self.geometry(f"{1000}x{800}")
 
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
@@ -88,7 +89,51 @@ class App(customtkinter.CTk):
     def mbit_event(self):
         pass
     def autocorr_event(self):
-        pass
+        self.main_label.destroy()
+        
+        input_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
+        input_frame.grid(row=0, column=0, rowspan=2, columnspan=3, pady=20,  sticky="nsew")
+        input_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
+        # input_frame.grid_columnconfigure(3, weight=0)
+        
+        # sequence label
+        self.bitSeqLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Bit Sequence")
+        self.bitSeqLabel.grid(row=1, column=0, padx=20, pady=5,sticky="w")
+
+        # sequence entry field
+        self.bitSeqEntry = customtkinter.CTkEntry(input_frame)
+        self.bitSeqEntry.grid(row=1, column=1, columnspan=4, padx=10, pady=5, sticky="ew")
+        
+        # alpha label
+        self.bitSeqLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Sensitivity coefficient")
+        self.bitSeqLabel.grid(row=2, column=0, padx=20, pady=5,sticky="w")
+
+        # alpha entry field
+        self.bitSeqEntry = customtkinter.CTkEntry(input_frame)
+        self.bitSeqEntry.grid(row=2, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
+        
+        # d param label
+        self.bitSeqLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Bit Sequence")
+        self.bitSeqLabel.grid(row=3, column=0, padx=20, pady=5,sticky="w")
+
+        # d param entry field
+        self.bitSeqEntry = customtkinter.CTkEntry(input_frame)
+        self.bitSeqEntry.grid(row=3, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
+
+        # Generate Button
+        self.generateResultsButton = customtkinter.CTkButton(input_frame,
+                                            text="Generate Results")
+        self.generateResultsButton.grid(row=4, column=3,
+                                        columnspan=1,
+                                        padx=20, pady=15,
+                                        sticky="ew")
+        
+        # call the function for the sequence
+        autocorrelation.autocorrelation("", 0, 0)
+        
     def serial_event(self):
         pass
     def runs_event(self):
