@@ -85,7 +85,8 @@ class App(customtkinter.CTk):
     def autocorr_event(self):
         pass
     def serial_event(self):
-        pass
+        self.main_label.destroy()
+        serial.serial(self)
 if __name__ == "__main__":
     app = App()
     app.mainloop()
