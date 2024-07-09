@@ -1,67 +1,20 @@
-import gui_sketch
-import tkinter
-import tkinter.messagebox
-import customtkinter
- 
-def serial(self):
-
-    # Length Label
-    self.lenLabel = customtkinter.CTkLabel(self,
-                                    text="Sequence Length")
-    self.lenLabel.grid(row=0, column=1,
-                        padx=20, pady=10,
-                        sticky="ew")
-
-    # Length Field
-    self.lenEntry = customtkinter.CTkEntry(self,
-                        width=200)
-    self.lenEntry.grid(row=0, column=2,
-                        columnspan=3, padx=20,
-                        pady=10, sticky="ew")
+def serial(seq:str, alpha:float, m: int):
+    if alpha >= 1 or alpha <= 0: 
+        print("a")
+        return 0, "alpha has to be between 0 and 1"
+    print(seq)
+    seq = "".join(c for c in seq if c == '1' or c == '0')
+    print(seq)
+    n = len(seq)
+    if n < 2:
+        return 0, "please send a longer sequence"
     
-    # Bit Sequence Label
-    self.bitSeqLabel = customtkinter.CTkLabel(self,
-                                    text="Bit Sequence")
-    self.bitSeqLabel.grid(row=1, column=1,
-                        padx=20, pady=10,
-                        sticky="ew")
-
-    # Bit sequence field
-    self.bitSeqEntry = customtkinter.CTkEntry(self)
-    self.bitSeqEntry.grid(row=1, column=2,
-                        columnspan=3, padx=20,
-                        pady=10, sticky="ew")
-    
-    # Significance level Label
-    self.bitSeqLabel = customtkinter.CTkLabel(self,
-                                    text="Significance level")
-    self.bitSeqLabel.grid(row=2, column=1,
-                        padx=20, pady=10,
-                        sticky="ew")
-
-    # Significance level field
-    self.bitSeqEntry = customtkinter.CTkEntry(self)
-    self.bitSeqEntry.grid(row=2, column=2,
-                        columnspan=3, padx=20,
-                        pady=10, sticky="ew")
-    
-    # Subsequence size Label
-    self.bitSeqLabel = customtkinter.CTkLabel(self,
-                                    text="Subsequence size")
-    self.bitSeqLabel.grid(row=3, column=1,
-                        padx=20, pady=10,
-                        sticky="ew")
-
-    # Subsequence size field
-    self.bitSeqEntry = customtkinter.CTkEntry(self)
-    self.bitSeqEntry.grid(row=3, column=2,
-                        columnspan=3, padx=20,
-                        pady=10, sticky="ew")
-
-    # Generate Button
-    self.generateResultsButton = customtkinter.CTkButton(self,
-                                        text="Generate Results")
-    self.generateResultsButton.grid(row=4, column=1,
-                                    columnspan=2,
-                                    padx=20, pady=10,
-                                    sticky="ew")
+    # calculate how big m can be, m <= log2(n) - 2
+    max_m = -3
+    n_log = 1
+    while n_log <= n:
+        n_log *= 2
+        max_m += 1
+    if m > max_m:
+        return 0, "please send an appropriate m"
+    return 1, "all good chief"
