@@ -222,9 +222,11 @@ class App(customtkinter.CTk):
             m_param = self.mParamEntry.get()
             alpha = float(alpha)  # Convert alpha to float
             m_param = int(m_param)  # Convert m_param to int
-            res, reason = serial.serial(bit_sequence, alpha, m_param)
+            res, reason, pval_1, pval_2 = serial.serial(bit_sequence, alpha, m_param)
             print(res)
             print(reason)
+            print(pval_1)
+            print(pval_2)
         
         # Generate Button
         self.generateResultsButton = customtkinter.CTkButton(input_frame, text="Generate Results", command=serial_generate_results)
