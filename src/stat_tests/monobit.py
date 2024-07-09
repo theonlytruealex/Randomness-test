@@ -3,39 +3,18 @@ import tkinter
 import tkinter.messagebox
 import customtkinter
  
-def monobit(self):
+def monobit(self, input_frame):
+    try:
+        sigLvl = float(self.sigLvlEntry.get().strip())
+    except ValueError as e:
+        self.errorLabel = customtkinter.CTkLabel(input_frame,
+                                        text="The data you entered does not have the correct format.\n Retry!\n")
+        self.errorLabel.grid(row=5, column=1,
+                            padx=20, pady=20,
+                            sticky="ew")
+        self.sigLvlEntry.delete(0, customtkinter.END)
+        self.bitSeqEntry.delete(0, customtkinter.END)
 
-    # Length Label
-    self.lenLabel = customtkinter.CTkLabel(self,
-                                    text="Sequence Length")
-    self.lenLabel.grid(row=0, column=1,
-                        padx=20, pady=20,
-                        sticky="ew")
-
-    # Length Field
-    self.lenEntry = customtkinter.CTkEntry(self,
-                        width=200)
-    self.lenEntry.grid(row=0, column=2,
-                        columnspan=3, padx=20,
-                        pady=20, sticky="ew")
-    
-    # Bit Sequence Label
-    self.bitSeqLabel = customtkinter.CTkLabel(self,
-                                    text="Bit Sequence")
-    self.bitSeqLabel.grid(row=1, column=1,
-                        padx=20, pady=20,
-                        sticky="ew")
-
-    # Name Entry Field
-    self.bitSeqEntry = customtkinter.CTkEntry(self)
-    self.bitSeqEntry.grid(row=1, column=2,
-                        columnspan=3, padx=20,
-                        pady=20, sticky="ew")
-
-    # Generate Button
-    self.generateResultsButton = customtkinter.CTkButton(self,
-                                        text="Generate Results")
-    self.generateResultsButton.grid(row=4, column=1,
-                                    columnspan=2,
-                                    padx=20, pady=20,
-                                    sticky="ew")
+    bitSeq = self.bitSeqEntry.get().strip()
+    for i in bitSeq:
+        pass
