@@ -58,7 +58,7 @@ class App(customtkinter.CTk):
         self.scaling_optionemenu.grid(row=10, column=0, padx=20, pady=(10, 20))
 
         # main frame with input and execution details
-        # render textboxs, lables, etc in this frame!!
+        # render textboxs, labels, etc in this frame!!
         self.main_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.main_frame.grid(row=0, column=1, rowspan=10, columnspan=3, sticky="nsew")
         self.main_frame.grid_columnconfigure((0, 1, 2), weight=1)
@@ -88,43 +88,47 @@ class App(customtkinter.CTk):
         for widgets in self.main_frame.winfo_children():
             widgets.destroy()
         
-        # Length Label
-        self.lenLabel = customtkinter.CTkLabel(self.main_frame,
-                                        text="Sequence Length")
-        self.lenLabel.grid(row=0, column=1,
+        input_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
+        input_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
+        input_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
+
+        # Significance Level Label
+        self.sigLvlLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Significance Level")
+        self.sigLvlLabel.grid(row=0, column=1,
                             padx=20, pady=20,
                             sticky="ew")
 
-        # Length Field
-        self.lenEntry = customtkinter.CTkEntry(self.main_frame,
+        # Significance Level Field
+        self.sigLvlEntry = customtkinter.CTkEntry(input_frame,
                             width=200)
-        self.lenEntry.grid(row=0, column=2,
+        self.sigLvlEntry.grid(row=0, column=2,
                             columnspan=3, padx=20,
                             pady=20, sticky="ew")
-        
+
         # Bit Sequence Label
-        self.bitSeqLabel = customtkinter.CTkLabel(self.main_frame,
+        self.bitSeqLabel = customtkinter.CTkLabel(input_frame,
                                         text="Bit Sequence")
         self.bitSeqLabel.grid(row=1, column=1,
                             padx=20, pady=20,
                             sticky="ew")
 
         # Name Entry Field
-        self.bitSeqEntry = customtkinter.CTkEntry(self.main_frame)
+        self.bitSeqEntry = customtkinter.CTkEntry(input_frame)
         self.bitSeqEntry.grid(row=1, column=2,
                             columnspan=3, padx=20,
                             pady=20, sticky="ew")
-
         # Generate Button
-        self.generateResultsButton = customtkinter.CTkButton(self.main_frame,
-                                            text="Generate Results")
+        self.generateResultsButton = customtkinter.CTkButton(input_frame,
+                                            text="Generate Results", command=lambda: self.generateButton_monobit_event(input_frame))
         self.generateResultsButton.grid(row=4, column=1,
                                         columnspan=2,
                                         padx=20, pady=20,
                                         sticky="ew")
+    def generateButton_monobit_event(self, input_frame):
         # algorithm pending...
-        # monobit.monobit(self)
-        
+        monobit.monobit(self, input_frame)
+
     def mbit_event(self):
         pass
     def autocorr_event(self):
@@ -146,22 +150,22 @@ class App(customtkinter.CTk):
         self.bitSeqEntry.grid(row=1, column=1, columnspan=5, padx=10, pady=5, sticky="ew")
         
         # alpha label
-        self.bitSeqLabel = customtkinter.CTkLabel(input_frame,
+        self.alphaLabel = customtkinter.CTkLabel(input_frame,
                                         text="Sensitivity coefficient (α)")
-        self.bitSeqLabel.grid(row=2, column=0, padx=20, pady=5,sticky="w")
+        self.alphaLabel.grid(row=2, column=0, padx=20, pady=5,sticky="w")
 
         # alpha entry field
-        self.bitSeqEntry = customtkinter.CTkEntry(input_frame)
-        self.bitSeqEntry.grid(row=2, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
+        self.alphaEntry = customtkinter.CTkEntry(input_frame)
+        self.alphaEntry.grid(row=2, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
         
         # d param label
-        self.bitSeqLabel = customtkinter.CTkLabel(input_frame,
+        self.DLabel = customtkinter.CTkLabel(input_frame,
                                         text="Shift coefficient (d)")
-        self.bitSeqLabel.grid(row=3, column=0, padx=20, pady=5,sticky="w")
+        self.DLabel.grid(row=3, column=0, padx=20, pady=5,sticky="w")
 
         # d param entry field
-        self.bitSeqEntry = customtkinter.CTkEntry(input_frame)
-        self.bitSeqEntry.grid(row=3, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
+        self.DEntry = customtkinter.CTkEntry(input_frame)
+        self.DEntry.grid(row=3, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
 
         # Generate Button
         self.generateResultsButton = customtkinter.CTkButton(input_frame,
@@ -183,6 +187,7 @@ class App(customtkinter.CTk):
         pass
     def runs_event(self):
         pass
+    
 if __name__ == "__main__":
     app = App()
     app.mainloop()
