@@ -24,7 +24,7 @@ class App(customtkinter.CTk):
 
         # configure window
         self.title("gui_sketch.py")
-        self.geometry(f"{1000}x{800}")
+        self.geometry(f"{1000}x{900}")
 
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
@@ -95,7 +95,7 @@ class App(customtkinter.CTk):
         input_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
         input_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
 
-        img = ImageTk.PhotoImage(Image.open("../../assets/monobit.png").resize((525, 525)))
+        img = ImageTk.PhotoImage(Image.open("../../assets/monobit.png").resize((680, 550)))
         image_serial = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
         image_serial.grid(row=3, column=0, rowspan=8, columnspan=5, pady=20,  sticky="nsew")
         image_serial.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
