@@ -1,13 +1,18 @@
 def serial(seq:str, alpha:float, m: int):
     if alpha >= 1 or alpha <= 0: 
         print("a")
-        return 0, "alpha has to be between 0 and 1"
-    print(seq)
+        return 0, "Alpha has to be between 0 and 1."
+    if m < 1:
+        return 0, "M too small. Please send an appropriatly sized m."
+    
+    # cleaning the input
     seq = "".join(c for c in seq if c == '1' or c == '0')
-    print(seq)
     n = len(seq)
-    if n < 2:
-        return 0, "please send a longer sequence"
+
+    # We choose 32  as the curoff point because log2(32) - 2 is 3,
+    # the smallest m for which we can add m-3 bits to end of the sequence
+    if n < 32:
+        return 0, "Sequence too short. Please send a longer sequence."
     
     # calculate how big m can be, m <= log2(n) - 2
     max_m = -3
@@ -16,5 +21,7 @@ def serial(seq:str, alpha:float, m: int):
         n_log *= 2
         max_m += 1
     if m > max_m:
-        return 0, "please send an appropriate m"
+        return 0, "M too big. Please send an appropriatly sized m."
+     
+    
     return 1, "all good chief"

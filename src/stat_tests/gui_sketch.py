@@ -128,9 +128,67 @@ class App(customtkinter.CTk):
             print(reason)
         
         # Generate Button
+        self.generateResultsButton = customtkinter.CTkButton(input_frame,
+                                            text="Generate Results")
+        self.generateResultsButton.grid(row=4, column=5,
+                                        columnspan=1,
+                                        padx=20, pady=15,
+                                        sticky="e")
+
+        # call the function for the sequence
+        autocorrelation.autocorrelation("", 0, 0)
+        
+        result_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="red")
+        result_frame.grid(row=3, column=0, rowspan=5, columnspan=5, pady=20,  sticky="nsew")
+        result_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
+        result_frame.grid_rowconfigure((1, 2, 3, 4, 5), weight=1)
+        
+    def serial_event(self):
+        for widgets in self.main_frame.winfo_children():
+            widgets.destroy()
+        
+        input_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
+        input_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20, sticky="nsew")
+        input_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
+        
+        # sequence label
+        self.bitSeqLabel = customtkinter.CTkLabel(input_frame, text="Bit Sequence")
+        self.bitSeqLabel.grid(row=1, column=0, padx=20, pady=5, sticky="w")
+
+        # sequence entry field
+        self.bitSeqEntry = customtkinter.CTkEntry(input_frame)
+        self.bitSeqEntry.grid(row=1, column=1, columnspan=5, padx=10, pady=5, sticky="ew")
+        
+        # alpha label
+        self.alphaLabel = customtkinter.CTkLabel(input_frame, text="Sensitivity coefficient (α)")
+        self.alphaLabel.grid(row=2, column=0, padx=20, pady=5, sticky="w")
+
+        # alpha entry field
+        self.alphaEntry = customtkinter.CTkEntry(input_frame)
+        self.alphaEntry.grid(row=2, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
+        
+        # m param label
+        self.mParamLabel = customtkinter.CTkLabel(input_frame, text="Subsequence length (m):")
+        self.mParamLabel.grid(row=3, column=0, padx=20, pady=5, sticky="w")
+
+        # m param entry field
+        self.mParamEntry = customtkinter.CTkEntry(input_frame)
+        self.mParamEntry.grid(row=3, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
+
+        # Define a function to get the entry values and call serial.serial
+        def serial_generate_results():
+            bit_sequence = self.bitSeqEntry.get()
+            alpha = self.alphaEntry.get()
+            m_param = self.mParamEntry.get()
+            alpha = float(alpha)  # Convert alpha to float
+            m_param = int(m_param)  # Convert m_param to int
+            res, reason = serial.serial(bit_sequence, alpha, m_param)
+            print(res)
+            print(reason)
+        
+        # Generate Button
         self.generateResultsButton = customtkinter.CTkButton(input_frame, text="Generate Results", command=serial_generate_results)
         self.generateResultsButton.grid(row=4, column=5, columnspan=1, padx=20, pady=15, sticky="e")
-
     def runs_event(self):
         pass
 if __name__ == "__main__":
