@@ -50,10 +50,10 @@ def monobit(self, input_frame):
     result = ""
     if alpha < p_value:
         out_text += "P-value > alpha\n\n"
-        result += "H0 is accepted\n\n"
+        result += "H0 is accepted\nHA is rejected"
     else:
         out_text += "P-value < alpha\n\n"
-        result += "H0 is rejected, HA is accepted\n\n"
+        result += "H0 is rejected\nHA is accepted"
     resultLabel = customtkinter.CTkLabel(output_frame,
                                         font=customtkinter.CTkFont(size=17, weight="normal"),
                                         text=out_text)
