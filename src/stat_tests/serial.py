@@ -1,11 +1,44 @@
 import scipy.special as sc
+import gui_sketch
+import tkinter
+import tkinter.messagebox
+import customtkinter
 
-def serial(seq:str = "0,1,1,0,0,1,1,1,0,1, 1,0,0,1,0,1,0,1,1,1, 0,1,1,0,1,0,1,1,1,0, 1,0,1,0,0,1,0,1,1,0.", alpha:float = 0.05, m: int = 3):
-    if alpha >= 1 or alpha <= 0: 
-        print("a")
-        return 0, "Alpha has to be between 0 and 1.", 1, 1
+def serial_results(self, res: int, reasoning: str, p_value1: float = 0, p_value2: float = 0, alpha: float = 0):
+    for widgets in self.main_frame.winfo_children():
+        widgets.destroy()
+    if res != -1:
+        output_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
+        output_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
+        output_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
+        out_text = "Null Hypothesis (H0):\nThe generated binary sequence is pseudo-random\n"
+        out_text += "Alternative Hypothesis (HA):\nThe generated binary sequence is not pseudo-random\n\n"
+        out_text += "Significance level: " + str(alpha) + "\n\n"
+        out_text += "P-values: " + str(p_value1) + " and " +  str(p_value2) + "\n\n"
+        out_text += reasoning
+        if res == 0:
+            out_text += "H0 is rejected\nHA is accepted"
+        else:
+            out_text += "H0 is accepted\nHA is rejected"
+    else:
+        output_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="red")
+        output_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
+        output_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
+        out_text = reasoning
+    resultLabel = customtkinter.CTkLabel(output_frame,
+                                        font=customtkinter.CTkFont(size=17, weight="normal"),
+                                        text=out_text)
+    resultLabel.grid(row=4, column=3,
+                            padx=20, pady=20,
+                            sticky="ew")
+
+def serial(self, seq: str, alpha: float, m: int):
+    if alpha >= 1 or alpha <= 0:
+        serial_results(self, -1, "Alpha has to be between 0 and 1.")
+        return
     if m < 3:
-        return 0, "M too small. Please send an appropriatly sized m.", 1, 1
+        serial_results(self, -1, "M too small. Please send an appropriatly sized m.")
+        return
     
     # cleaning the input
     seq = "".join(c for c in seq if c == '1' or c == '0')
@@ -15,7 +48,8 @@ def serial(seq:str = "0,1,1,0,0,1,1,1,0,1, 1,0,0,1,0,1,0,1,1,1, 0,1,1,0,1,0,1,1,
     # off point because log2(32) - 2 is 3,
     # the smallest m for which we can add m-3 bits to end of the sequence
     if n < 32:
-        return 0, "Sequence too short. Please send a longer sequence.", 1, 1
+        serial_results(self, -1, "Sequence too short. Please send a longer sequence.")
+        return
     
     # calculate how big m can be, m <= log2(n) - 2
     max_m = -3
@@ -24,7 +58,8 @@ def serial(seq:str = "0,1,1,0,0,1,1,1,0,1, 1,0,0,1,0,1,0,1,1,1, 0,1,1,0,1,0,1,1,
         n_log *= 2
         max_m += 1
     if m > max_m:
-        return 0, "M too big. Please send an appropriatly sized m.", 1, 1
+        serial_results(self, -1, "M too big. Please send an appropriatly sized m.")
+        return
     
     # test 1
     seq = seq + seq[0:m - 3]
@@ -78,12 +113,19 @@ def serial(seq:str = "0,1,1,0,0,1,1,1,0,1, 1,0,0,1,0,1,0,1,1,1, 0,1,1,0,1,0,1,1,
     p_val2 =  sc.gammainc(stat_1 / 2, pow(2, m - 3))
     print(p_val1, p_val2)
     if p_val1 <= alpha and p_val2 > alpha:
-        return 0, "P-value1 is not greater than alpha, the Sequence is not pseudo-random for a significance level of {}".format(alpha), p_val1, p_val2
-    if p_val2 <= alpha and p_val1 > alpha:
-        return 0, "P-value2 is not greater than alpha, the Sequence is not pseudo-random for a significance level of {}".format(alpha), p_val1, p_val2
-    if p_val1 <= alpha and p_val2 <= alpha:
-        return 0, "The p-values are not greater than alpha, the Sequence is not pseudo-random for a significance level of {}".format(alpha), p_val1, p_val2
-    if p_val1 > alpha and p_val2 > alpha:
-        return 1, "The sequence is pseudo-random for a significance level of {}".format(alpha), p_val1, p_val2
-
-    return 1, "all good chief", p_val1, p_val2
+        serial_results(self, 0,
+                       "P-value1 is not greater than alpha.\nThe Sequence is not pseudo-random for a significance level of\n{}\n\n".format(alpha), \
+                        p_val1, p_val2, alpha)
+    elif p_val2 <= alpha and p_val1 > alpha:
+        serial_results(self, 0,
+                       "P-value2 is not greater than alpha.\nThe Sequence is not pseudo-random for a significance level of\n{}\n\n".format(alpha), \
+                        p_val1, p_val2, alpha)
+    elif p_val1 <= alpha and p_val2 <= alpha:
+        serial_results(self, 0,
+                       "The p-values are not greater than alpha.\nThe Sequence is not pseudo-random for a significance level of\n{}\n\n".format(alpha), \
+                        p_val1, p_val2, alpha)
+    elif p_val1 > alpha and p_val2 > alpha:
+        serial_results(self, 1, "The sequence is pseudo-random for a significance level of\n{}\n\n".format(alpha), p_val1, p_val2)
+    else:
+        serial_results(self, 1, "Logical impossiblity, all's not good chief", p_val1, p_val2)
+    return

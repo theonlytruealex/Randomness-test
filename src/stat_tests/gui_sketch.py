@@ -232,7 +232,7 @@ class App(customtkinter.CTk):
         self.mParamEntry.grid(row=3, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
 
         img = ImageTk.PhotoImage(Image.open("../../assets/serial.png").resize((650, 525)))
-        image_serial = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
+        image_serial = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="gray92")
         image_serial.grid(row=3, column=0, rowspan=8, columnspan=5, pady=20,  sticky="nsew")
         image_serial.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
         image_serial.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
@@ -246,11 +246,7 @@ class App(customtkinter.CTk):
             m_param = self.mParamEntry.get()
             alpha = float(alpha)  # Convert alpha to float
             m_param = int(m_param)  # Convert m_param to int
-            res, reason, pval_1, pval_2 = serial.serial(bit_sequence, alpha, m_param)
-            print(res)
-            print(reason)
-            print(pval_1)
-            print(pval_2)
+            serial.serial(self, bit_sequence, alpha, m_param)
         
         # Generate Button
         self.generateResultsButton = customtkinter.CTkButton(input_frame, text="Generate Results", command=serial_generate_results)
