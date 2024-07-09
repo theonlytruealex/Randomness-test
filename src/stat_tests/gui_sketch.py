@@ -125,6 +125,7 @@ class App(customtkinter.CTk):
                                         columnspan=2,
                                         padx=20, pady=20,
                                         sticky="ew")
+        
     def generateButton_monobit_event(self, input_frame):
         # algorithm pending...
         monobit.monobit(self, input_frame)
