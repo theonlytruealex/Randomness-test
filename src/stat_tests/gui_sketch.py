@@ -12,6 +12,7 @@ import serial
 import runs
 import numpy as np
 from scipy.special import erfc
+from PIL import Image, ImageTk
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -73,8 +74,8 @@ class App(customtkinter.CTk):
         self.main_label.grid(row=6, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
         # set default values
-        self.appearance_mode_optionemenu.set("Dark")
-        self.change_appearance_mode_event("Dark")
+        self.appearance_mode_optionemenu.set("Light")
+        self.change_appearance_mode_event("Light")
         self.scaling_optionemenu.set("100%")
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
@@ -127,8 +128,8 @@ class App(customtkinter.CTk):
                                         columnspan=2,
                                         padx=20, pady=20,
                                         sticky="ew")
+        
     def generateButton_monobit_event(self, input_frame):
-        # algorithm pending...
         monobit.monobit(self, input_frame)
 
     def mbit_event(self):
@@ -153,7 +154,7 @@ class App(customtkinter.CTk):
         
         # alpha label
         self.alphaLabel = customtkinter.CTkLabel(input_frame,
-                                        text="Sensitivity coefficient (α)")
+                                        text="Significance Level (α)")
         self.alphaLabel.grid(row=2, column=0, padx=20, pady=5,sticky="w")
 
         # alpha entry field
@@ -181,9 +182,14 @@ class App(customtkinter.CTk):
         autocorrelation.autocorrelation("", 0, 0)
         
         result_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="red")
-        result_frame.grid(row=3, column=0, rowspan=5, columnspan=5, pady=20,  sticky="nsew")
-        result_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
-        result_frame.grid_rowconfigure((1, 2, 3, 4, 5), weight=1)
+        result_frame.grid(row=3, column=0, rowspan=8, columnspan=5, pady=20,  sticky="nsew")
+        result_frame.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
+        result_frame.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
+        
+        image = ImageTk.PhotoImage(Image.open("../../assets/autocorr.png"))
+        lbl = customtkinter.CTkLabel(result_frame, image=image)
+        lbl.grid(row=0, column=0,sticky="nsew")
+        
         
     def serial_event(self):
         for widgets in self.main_frame.winfo_children():
@@ -224,9 +230,11 @@ class App(customtkinter.CTk):
             m_param = self.mParamEntry.get()
             alpha = float(alpha)  # Convert alpha to float
             m_param = int(m_param)  # Convert m_param to int
-            res, reason = serial.serial(bit_sequence, alpha, m_param)
+            res, reason, pval_1, pval_2 = serial.serial(bit_sequence, alpha, m_param)
             print(res)
             print(reason)
+            print(pval_1)
+            print(pval_2)
         
         # Generate Button
         self.generateResultsButton = customtkinter.CTkButton(input_frame, text="Generate Results", command=serial_generate_results)
