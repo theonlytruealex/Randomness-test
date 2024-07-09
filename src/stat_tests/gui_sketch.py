@@ -3,13 +3,15 @@
 # serves as an implementation for the main menu module
 
 import tkinter
-import tkinter.messagebox
+from tkinter import messagebox
 import customtkinter
 import monobit
 import mbit
 import autocorrelation
 import serial
 import runs
+import numpy as np
+from scipy.special import erfc
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -229,9 +231,54 @@ class App(customtkinter.CTk):
         # Generate Button
         self.generateResultsButton = customtkinter.CTkButton(input_frame, text="Generate Results", command=serial_generate_results)
         self.generateResultsButton.grid(row=4, column=5, columnspan=1, padx=20, pady=15, sticky="e")
+
     def runs_event(self):
-        pass
-    
+        for widgets in self.main_frame.winfo_children():
+            widgets.destroy()
+        
+        input_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
+        input_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
+        input_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
+        
+        # sequence label
+        self.bitSeqLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Bit Sequence")
+        self.bitSeqLabel.grid(row=1, column=0, padx=20, pady=5,sticky="w")
+
+        # sequence entry field
+        self.bitSeqEntry = customtkinter.CTkEntry(input_frame)
+        self.bitSeqEntry.grid(row=1, column=1, columnspan=5, padx=10, pady=5, sticky="ew")
+        
+        # alpha label
+        self.alphaLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Sensitivity coefficient (α)")
+        self.alphaLabel.grid(row=2, column=0, padx=20, pady=5,sticky="w")
+
+        # alpha entry field
+        self.alphaEntry = customtkinter.CTkEntry(input_frame)
+        self.alphaEntry.grid(row=2, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
+        
+        def runs_test():
+             # validating the input
+            try:
+                bit_sequence = float(self.bitSeqEntry.get())
+            except ValueError:
+                messagebox.showerror("Error", "Please enter a valid integer for Bit Sequence.")
+                return
+
+            bit_sequence = self.bitSeqEntry.get()
+            alpha = self.alphaEntry.get()
+            alpha = float(alpha) 
+            text = runs.runs(bit_sequence, alpha)
+            messagebox.showinfo("Rezultat", text)
+        
+        # Generate Button
+        self.generateResultsButton = customtkinter.CTkButton(input_frame,
+                                            text="Generate Results", command = runs_test)
+        self.generateResultsButton.grid(row=4, column=5,
+                                        columnspan=1,
+                                        padx=20, pady=15,
+                                        sticky="e")
 if __name__ == "__main__":
     app = App()
     app.mainloop()
