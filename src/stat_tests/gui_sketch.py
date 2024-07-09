@@ -136,8 +136,11 @@ class App(customtkinter.CTk):
         for widgets in self.main_frame.winfo_children():
             widgets.destroy()
         
-        input_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
-        input_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
+        self.main_frame.grid_rowconfigure((2, 3, 4, 5, 6, 7, 8, 9, 10, 11), weight=0)
+        self.main_frame.grid_rowconfigure(0, weight=1)
+        self.main_frame.grid_rowconfigure(1, weight=3)
+        input_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="red")
+        input_frame.grid(row=0, column=0, rowspan=1, columnspan=5, pady=10,  sticky="nsew")
         input_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
         # input_frame.grid_columnconfigure(3, weight=0)
         
@@ -173,20 +176,41 @@ class App(customtkinter.CTk):
                                             text="Generate Results")
         self.generateResultsButton.grid(row=4, column=5,
                                         columnspan=1,
-                                        padx=20, pady=15,
+                                        padx=20, pady=0,
                                         sticky="e")
 
         # call the function for the sequence
         autocorrelation.autocorrelation("", 0, 0)
         
-        result_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="red")
-        result_frame.grid(row=3, column=0, rowspan=8, columnspan=5, pady=20,  sticky="nsew")
+        result_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="blue")
+        result_frame.grid(row=2, column=0, rowspan=9, columnspan=5, pady=0,  sticky="nsew")
         result_frame.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
-        result_frame.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
+        result_frame.grid_rowconfigure((0, 1), weight=1)
         
-        image = ImageTk.PhotoImage(Image.open("../../assets/autocorr.png"))
-        lbl = customtkinter.CTkLabel(result_frame, image=image)
-        lbl.grid(row=0, column=0,sticky="nsew")
+        image = customtkinter.CTkImage(light_image=Image.open("../../assets/autocorr.png"), size=(500, 361))
+        lbl = customtkinter.CTkLabel(result_frame, image=image, text="")
+        lbl.grid(row=0, column=2, sticky="nsew")
+        
+        proc_frame = customtkinter.CTkFrame(result_frame, corner_radius=0, fg_color="pink")
+        proc_frame.grid(row=1, column=2, pady=0,  sticky="nsew")
+        proc_frame.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
+        proc_frame.grid_rowconfigure((0, 1), weight=1)
+        
+        res = customtkinter.CTkImage(light_image=Image.open("../../assets/pval.png"), size=(80, 58))
+        lbl2 = customtkinter.CTkLabel(proc_frame, image=res, text="")
+        lbl2.grid(row=0, column=0, rowspan=2, pady=30, sticky="e")
+        
+        result_lbl = customtkinter.CTkLabel(proc_frame, 
+                                            font=customtkinter.CTkFont(family="Times", size=15),
+                                            text="20",
+                                            anchor="w") 
+        result_lbl.grid(row=0, column=1, sticky="sw", pady=0, padx=5)
+        
+        alpha_lbl = customtkinter.CTkLabel(proc_frame, 
+                                            font=customtkinter.CTkFont(family="Times", size=15),
+                                            text="0.5",
+                                            anchor="w") 
+        alpha_lbl.grid(row=1, column=1, sticky="nw", pady=0, padx=5)
         
         
     def serial_event(self):
