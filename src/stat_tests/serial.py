@@ -4,6 +4,7 @@ import tkinter
 import tkinter.messagebox
 import customtkinter
 
+# output function, res can take the values -1 (for an error), 0 (failed test) and 1 (if the sequence is pseudo-radom)
 def serial_results(self, res: int, reasoning: str, p_value1: float = 0, p_value2: float = 0, alpha: float = 0):
     for widgets in self.main_frame.winfo_children():
         widgets.destroy()
@@ -111,7 +112,7 @@ def serial(self, seq: str, alpha: float, m: int):
 
     p_val1 = sc.gammainc(stat_0 / 2, pow(2, m - 2))
     p_val2 =  sc.gammainc(stat_1 / 2, pow(2, m - 3))
-    print(p_val1, p_val2)
+
     if p_val1 <= alpha and p_val2 > alpha:
         serial_results(self, 0,
                        "P-value1 is not greater than alpha.\nThe Sequence is not pseudo-random for a significance level of\n{}\n\n".format(alpha), \
