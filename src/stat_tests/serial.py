@@ -40,6 +40,7 @@ def serial(seq:str = "0,1,1,0,0,1,1,1,0,1, 1,0,0,1,0,1,0,1,1,1, 0,1,1,0,1,0,1,1,
         psi_2 += frequency
     psi_2 *= pow(2, m)
     psi_2 -= n
+
     # test 2
     m += 1
     seq += seq[m - 2]
@@ -69,12 +70,13 @@ def serial(seq:str = "0,1,1,0,0,1,1,1,0,1, 1,0,0,1,0,1,0,1,1,1, 0,1,1,0,1,0,1,1,
         psi_0 += frequency
     psi_0 *= pow(2, m)
     psi_0 -= n
+    
     stat_0 = psi_0 - psi_1
     stat_1 = psi_0 - 2 * psi_1 + psi_2
 
-    p_val1 = sc.gammainc(pow(2, m - 2), stat_0 / 2)
-    p_val2 = sc.gammainc(pow(2, m - 3), stat_1 / 2)
-
+    p_val1 = sc.gammainc(stat_0 / 2, pow(2, m - 2))
+    p_val2 =  sc.gammainc(stat_1 / 2, pow(2, m - 3))
+    print(p_val1, p_val2)
     if p_val1 <= alpha and p_val2 > alpha:
         return 0, "P-value1 is not greater than alpha, the Sequence is not pseudo-random for a significance level of {}".format(alpha), p_val1, p_val2
     if p_val2 <= alpha and p_val1 > alpha:
@@ -84,6 +86,4 @@ def serial(seq:str = "0,1,1,0,0,1,1,1,0,1, 1,0,0,1,0,1,0,1,1,1, 0,1,1,0,1,0,1,1,
     if p_val1 > alpha and p_val2 > alpha:
         return 1, "The sequence is pseudo-random for a significance level of {}".format(alpha), p_val1, p_val2
 
-    return 1, "all good chief"
-
-serial()
+    return 1, "all good chief", p_val1, p_val2
