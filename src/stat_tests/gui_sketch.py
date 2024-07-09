@@ -127,7 +127,6 @@ class App(customtkinter.CTk):
                                         sticky="ew")
         
     def generateButton_monobit_event(self, input_frame):
-        # algorithm pending...
         monobit.monobit(self, input_frame)
 
     def mbit_event(self):
