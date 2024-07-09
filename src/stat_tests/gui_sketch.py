@@ -3,18 +3,23 @@
 # serves as an implementation for the main menu module
 
 import tkinter
-import tkinter.messagebox
+from tkinter import filedialog
+from tkinter import messagebox
 import customtkinter
 import monobit
 import mbit
 import autocorrelation
 import serial
 import runs
+import numpy as np
+from scipy.special import erfc
 from PIL import Image, ImageTk
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
+# global variable to hold file data
+file_contents = ""
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -22,7 +27,7 @@ class App(customtkinter.CTk):
 
         # configure window
         self.title("gui_sketch.py")
-        self.geometry(f"{1000}x{800}")
+        self.geometry(f"{1000}x{900}")
 
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
@@ -92,6 +97,14 @@ class App(customtkinter.CTk):
         input_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
         input_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
         input_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
+
+        img = ImageTk.PhotoImage(Image.open("../../assets/monobit.png").resize((680, 550)))
+        image_serial = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
+        image_serial.grid(row=3, column=0, rowspan=8, columnspan=5, pady=20,  sticky="nsew")
+        image_serial.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
+        image_serial.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
+        lbl = customtkinter.CTkLabel(image_serial, image=img, text="")
+        lbl.grid(row=0, column=0,sticky="nsew")
 
         # Significance Level Label
         self.sigLvlLabel = customtkinter.CTkLabel(input_frame,
@@ -214,6 +227,37 @@ class App(customtkinter.CTk):
         
         
     def serial_event(self):
+
+        global file_contents
+        file_contents = ""
+
+        def open_file():
+            global file_contents
+            file_path = filedialog.askopenfilename()
+            
+            if file_path:
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    file_contents = file.read()
+
+        # Define a function to get the entry values and call serial.serial
+        def serial_generate_results():
+            global file_contents
+            bit_sequence = self.bitSeqEntry.get()
+            if bit_sequence != "":
+                file_contents = ""
+                alpha = self.alphaEntry.get()
+                m_param = self.mParamEntry.get()
+                alpha = float(alpha)  # Convert alpha to float
+                m_param = int(m_param)  # Convert m_param to int
+                serial.serial(self, bit_sequence, alpha, m_param)
+            else:
+                alpha = self.alphaEntry.get()
+                m_param = self.mParamEntry.get()
+                alpha = float(alpha)  # Convert alpha to float
+                m_param = int(m_param)  # Convert m_param to int
+                serial.serial(self, file_contents, alpha, m_param)
+
+        # clean-up
         for widgets in self.main_frame.winfo_children():
             widgets.destroy()
         
@@ -245,23 +289,69 @@ class App(customtkinter.CTk):
         self.mParamEntry = customtkinter.CTkEntry(input_frame)
         self.mParamEntry.grid(row=3, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
 
-        # Define a function to get the entry values and call serial.serial
-        def serial_generate_results():
-            bit_sequence = self.bitSeqEntry.get()
-            alpha = self.alphaEntry.get()
-            m_param = self.mParamEntry.get()
-            alpha = float(alpha)  # Convert alpha to float
-            m_param = int(m_param)  # Convert m_param to int
-            res, reason = serial.serial(bit_sequence, alpha, m_param)
-            print(res)
-            print(reason)
-        
+        img = ImageTk.PhotoImage(Image.open("../../assets/serial.png").resize((650, 525)))
+        image_serial = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="gray92")
+        image_serial.grid(row=3, column=0, rowspan=8, columnspan=5, pady=20,  sticky="nsew")
+        image_serial.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
+        image_serial.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
+        lbl = customtkinter.CTkLabel(image_serial, image=img, text="")
+        lbl.grid(row=0, column=0,sticky="nsew")
+
+        # Open file button
+        self.generateResultsButton = customtkinter.CTkButton(input_frame, text="Open file", command=open_file)
+        self.generateResultsButton.grid(row=4, column=0, columnspan=1, padx=20, pady=15, sticky="e")
+
         # Generate Button
         self.generateResultsButton = customtkinter.CTkButton(input_frame, text="Generate Results", command=serial_generate_results)
         self.generateResultsButton.grid(row=4, column=5, columnspan=1, padx=20, pady=15, sticky="e")
+
     def runs_event(self):
-        pass
-    
+        for widgets in self.main_frame.winfo_children():
+            widgets.destroy()
+        
+        input_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
+        input_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
+        input_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
+        
+        # sequence label
+        self.bitSeqLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Bit Sequence")
+        self.bitSeqLabel.grid(row=1, column=0, padx=20, pady=5,sticky="w")
+
+        # sequence entry field
+        self.bitSeqEntry = customtkinter.CTkEntry(input_frame)
+        self.bitSeqEntry.grid(row=1, column=1, columnspan=5, padx=10, pady=5, sticky="ew")
+        
+        # alpha label
+        self.alphaLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Sensitivity coefficient (α)")
+        self.alphaLabel.grid(row=2, column=0, padx=20, pady=5,sticky="w")
+
+        # alpha entry field
+        self.alphaEntry = customtkinter.CTkEntry(input_frame)
+        self.alphaEntry.grid(row=2, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
+        
+        def runs_test():
+             # validating the input
+            try:
+                bit_sequence = float(self.bitSeqEntry.get())
+            except ValueError:
+                messagebox.showerror("Error", "Please enter a valid integer for Bit Sequence.")
+                return
+
+            bit_sequence = self.bitSeqEntry.get()
+            alpha = self.alphaEntry.get()
+            alpha = float(alpha) 
+            text = runs.runs(bit_sequence, alpha)
+            messagebox.showinfo("Rezultat", text)
+        
+        # Generate Button
+        self.generateResultsButton = customtkinter.CTkButton(input_frame,
+                                            text="Generate Results", command = runs_test)
+        self.generateResultsButton.grid(row=4, column=5,
+                                        columnspan=1,
+                                        padx=20, pady=15,
+                                        sticky="e")
 if __name__ == "__main__":
     app = App()
     app.mainloop()
