@@ -3,6 +3,7 @@
 # serves as an implementation for the main menu module
 
 import tkinter
+from tkinter import filedialog
 from tkinter import messagebox
 import customtkinter
 import monobit
@@ -17,6 +18,8 @@ from PIL import Image, ImageTk
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
+# global variable to hold file data
+file_contents = ""
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -200,6 +203,36 @@ class App(customtkinter.CTk):
         
         
     def serial_event(self):
+
+        global file_contents
+        file_contents = ""
+        # Define a function to get the entry values and call serial.serial
+        def serial_generate_results():
+            global file_contents
+            bit_sequence = self.bitSeqEntry.get()
+            if bit_sequence != "":
+                file_contents = ""
+                alpha = self.alphaEntry.get()
+                m_param = self.mParamEntry.get()
+                alpha = float(alpha)  # Convert alpha to float
+                m_param = int(m_param)  # Convert m_param to int
+                serial.serial(self, bit_sequence, alpha, m_param)
+            else:
+                alpha = self.alphaEntry.get()
+                m_param = self.mParamEntry.get()
+                alpha = float(alpha)  # Convert alpha to float
+                m_param = int(m_param)  # Convert m_param to int
+                serial.serial(self, file_contents, alpha, m_param)
+
+        def open_file():
+            global file_contents
+            file_path = filedialog.askopenfilename()
+            
+            if file_path:
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    file_contents = file.read()
+
+        # clean-up
         for widgets in self.main_frame.winfo_children():
             widgets.destroy()
         
@@ -239,15 +272,10 @@ class App(customtkinter.CTk):
         lbl = customtkinter.CTkLabel(image_serial, image=img, text="")
         lbl.grid(row=0, column=0,sticky="nsew")
 
-        # Define a function to get the entry values and call serial.serial
-        def serial_generate_results():
-            bit_sequence = self.bitSeqEntry.get()
-            alpha = self.alphaEntry.get()
-            m_param = self.mParamEntry.get()
-            alpha = float(alpha)  # Convert alpha to float
-            m_param = int(m_param)  # Convert m_param to int
-            serial.serial(self, bit_sequence, alpha, m_param)
-        
+        # Open file button
+        self.generateResultsButton = customtkinter.CTkButton(input_frame, text="Open file", command=open_file)
+        self.generateResultsButton.grid(row=4, column=0, columnspan=1, padx=20, pady=15, sticky="e")
+
         # Generate Button
         self.generateResultsButton = customtkinter.CTkButton(input_frame, text="Generate Results", command=serial_generate_results)
         self.generateResultsButton.grid(row=4, column=5, columnspan=1, padx=20, pady=15, sticky="e")
