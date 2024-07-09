@@ -206,6 +206,15 @@ class App(customtkinter.CTk):
 
         global file_contents
         file_contents = ""
+
+        def open_file():
+            global file_contents
+            file_path = filedialog.askopenfilename()
+            
+            if file_path:
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    file_contents = file.read()
+
         # Define a function to get the entry values and call serial.serial
         def serial_generate_results():
             global file_contents
@@ -223,14 +232,6 @@ class App(customtkinter.CTk):
                 alpha = float(alpha)  # Convert alpha to float
                 m_param = int(m_param)  # Convert m_param to int
                 serial.serial(self, file_contents, alpha, m_param)
-
-        def open_file():
-            global file_contents
-            file_path = filedialog.askopenfilename()
-            
-            if file_path:
-                with open(file_path, 'r', encoding='utf-8') as file:
-                    file_contents = file.read()
 
         # clean-up
         for widgets in self.main_frame.winfo_children():
