@@ -49,16 +49,17 @@ def runs(self, seq:str, alpha:float):
     out += "Alternative Hypothesis (HA):\nThe generated binary sequence is not pseudo-random\n\n"
     out += "Significance level: " + str(alpha) + "\n\n"
     out += "P-value: " + str(p_value) + "\n\n"
+    out += "Hypothesis check:\n"
     result = ""
     if nr1 >= nr2:
         out += "The monobit test failed, therefore the Runs algorithm stops.\n\n"
         result += "H0 is rejected\nHA is accepted"
     else:
         if alpha < p_value:
-            out += "The sequence is pseudo-random for a significance level of\n{}\n\n".format(alpha)
+            out += "P-value > alpha\n\n"
             result += "H0 is accepted\nHA is rejected"
         else:
-            out += "P-value is not greater than alpha.\nThe Sequence is not pseudo-random for a significance level of\n{}\n\n".format(alpha)
+            out += "P-value < alpha\n\n"
             result += "H0 is rejected\nHA is accepted"
     
     # afisare
@@ -68,11 +69,10 @@ def runs(self, seq:str, alpha:float):
     resultLabel.grid(row=4, column=3,
                             padx=20, pady=20,
                             sticky="ew")
-    final_resultLabel = customtkinter.CTkLabel(output_frame, fg_color="blue", 
+    final_resultLabel = customtkinter.CTkLabel(output_frame, fg_color="red", 
                                         font=customtkinter.CTkFont(size=25, weight="normal"),
                                         text=result)
     final_resultLabel.grid(row=10, column=3,
                             padx=20, pady=20,
                             sticky="ew")
-    
 
