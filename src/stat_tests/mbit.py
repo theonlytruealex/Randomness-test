@@ -5,6 +5,7 @@ import customtkinter
 import math
 from scipy.special import gammainc, gammaincc
 import numpy as np
+from scipy.stats import chi2
  
 def mbit(self, input_frame):
     alpha = self.alphaEntry.get().strip()
@@ -68,19 +69,20 @@ def mbit(self, input_frame):
         for ch in seq_current:
             sum_current += int(ch)
         sum_current /= M_param
-
         sum_current -= 0.5
 
         stats += sum_current * sum_current
     
-    chi_squared = stats    
-    stats *= 4 * M_param
+    #print(chi_squared)
+    chi_squared = stats * 4 * nr_blocks
 
-    p_value = gammainc(nr_blocks / 2, chi_squared / 2)
-    print(p_value)
-    formatted_p_value = "{:.3f}".format(p_value)
+    #print(chi_squared)
 
-    out_text += "The test's statistic: " + str(stats) + "\n\n"
+    #p_value = 1 - gammainc(nr_blocks / 2, chi_squared / 2) 
+    p_value = chi2.sf(chi_squared, nr_blocks)
+    formatted_p_value = "{:.7f}".format(p_value)
+
+    out_text += "The test's statistic: " + str(chi_squared) + "\n\n"
     out_text += "P-value: " + str(formatted_p_value) + "\n\n"
     out_text += "Hypothesis check:\n"
     result = ""

@@ -16,7 +16,6 @@ from scipy.special import erfc
 from PIL import Image, ImageTk
 import genlatex
 import time
-import warnings
 
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -157,7 +156,6 @@ class App(customtkinter.CTk):
         # input_frame.grid_columnconfigure(3, weight=0)
 
         img = customtkinter.CTkImage(light_image=Image.open("../../assets/mbit.png"), size=(600, 600))
-        # img = ImageTk.PhotoImage(Image.open("../../assets/Monobit.png").resize((650, 330)))
         image_serial = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="gray92")
         image_serial.grid(row=3, column=0, rowspan=8, columnspan=5, pady=20,  sticky="nsew")
         image_serial.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
@@ -260,7 +258,7 @@ class App(customtkinter.CTk):
         result_frame.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
         result_frame.grid_rowconfigure((0, 1), weight=1)
         
-        image = customtkinter.CTkImage(light_image=Image.open("../../assets/autocorr/autocorr.png"), size=(500, 361))
+        image = customtkinter.CTkImage(light_image=Image.open("../../assets/autocorr.png"), size=(500, 361))
         lbl = customtkinter.CTkLabel(result_frame, image=image, text="")
         lbl.grid(row=0, column=2, sticky="nsew")
         
@@ -303,7 +301,7 @@ class App(customtkinter.CTk):
                 return
             
             
-            img = Image.open("../../assets/autocorr/autocorr_h.png")
+            img = Image.open("../../assets/autocorr.png")
             width, height = img.size
             image = customtkinter.CTkImage(light_image=img, size=(500, int(height / width * 550)))
             lbl = customtkinter.CTkLabel(self.main_frame, image=image, text="")
@@ -418,18 +416,6 @@ class App(customtkinter.CTk):
     def runs_event(self):
         for widgets in self.main_frame.winfo_children():
             widgets.destroy()
-
-        global file_contents
-        file_contents = ""
-
-        def open_file():
-            global file_contents
-            file_path = filedialog.askopenfilename()
-            
-            if file_path:
-                with open(file_path, 'r', encoding='utf-8') as file:
-                    file_contents = file.read()
-
         
         input_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
         input_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
@@ -454,42 +440,18 @@ class App(customtkinter.CTk):
         self.alphaEntry.grid(row=2, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
         
         def runs_test():
-
-            alpha = self.alphaEntry.get()
-            alpha = float(alpha)  
-
-            if alpha >= 1 or alpha <= 0:
-                messagebox.showerror("Error", "Alpha has to be between 0 and 1.")
+             # validating the input
+            try:
+                bit_sequence = float(self.bitSeqEntry.get())
+            except ValueError:
+                messagebox.showerror("Error", "Please enter a valid integer for Bit Sequence.")
                 return
 
-            global file_contents
             bit_sequence = self.bitSeqEntry.get()
-            if bit_sequence != "":
-                 # validating the input
-                try:
-                    bit_sequence = float(self.bitSeqEntry.get())
-                except ValueError:
-                    messagebox.showerror("Error", "Please enter a valid integer for Bit Sequence.")
-                    return
-                bit_sequence = self.bitSeqEntry.get()
-                file_contents = ""
-                runs.runs(self, bit_sequence, alpha)
-            else:
-                runs.runs(self, file_contents, alpha)
-            
-        
-        img = ImageTk.PhotoImage(Image.open("../../assets/runs.png").resize((650, 525)))
-        warnings.filterwarnings("ignore", category=UserWarning)
-        image_runs = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="gray92")
-        image_runs.grid(row=3, column=0, rowspan=8, columnspan=5, pady=20,  sticky="nsew")
-        image_runs.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
-        image_runs.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
-        lbl = customtkinter.CTkLabel(image_runs, image=img, text="")
-        lbl.grid(row=0, column=0,sticky="nsew")
-
-        # Open file button
-        self.generateResultsButton = customtkinter.CTkButton(input_frame, text="Open file", command=open_file)
-        self.generateResultsButton.grid(row=4, column=0, columnspan=1, padx=20, pady=15, sticky="e")
+            alpha = self.alphaEntry.get()
+            alpha = float(alpha) 
+            text = runs.runs(bit_sequence, alpha)
+            messagebox.showinfo("Rezultat", text)
         
         # Generate Button
         self.generateResultsButton = customtkinter.CTkButton(input_frame,
