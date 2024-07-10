@@ -42,9 +42,9 @@ def monobit(self, input_frame):
         n = n + 1
         s = s + int(ch)
     s = s - n
-    s = abs(s) / math.sqrt(n)
+    s = round(abs(s) / math.sqrt(n), 3)
     out_text += "The test's statistic: " + str(s) + "\n\n"
-    p_value = math.erfc(s / math.sqrt(2))
+    p_value = round(math.erfc(s / math.sqrt(2)), 3)
     out_text += "P-value: " + str(p_value) + "\n\n"
     out_text += "Hypothesis check:\n"
     result = ""
