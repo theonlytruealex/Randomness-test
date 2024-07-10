@@ -10,10 +10,12 @@ import runs
 import numpy as np
 from scipy.special import erfc
 
-def runs(seq:str, alpha:float):
-    if alpha >= 1 or alpha <= 0: 
-        return "Alpha has to be between 0 and 1."
+def runs(self, seq:str, alpha:float):
 
+    if all(char in {'0', '1'} for char in seq) == False:
+        messagebox.showerror("Error", "Please enter a valid integer for Bit Sequence.")
+        return
+    
     n = len(seq)
     n_1 = seq.count("1")
     
@@ -24,9 +26,6 @@ def runs(seq:str, alpha:float):
     # if the test fails, then the algorithm stops
     nr1 = abs(ratio - 0.5)
     nr2 = float (2 / np.sqrt(n))
-
-    if nr1 >= nr2:
-        return "Monobit test failed, the sequence is NOT pseudorandom."
 
     # the number of "gaps" and "blocks"
     stat = 1
@@ -41,9 +40,39 @@ def runs(seq:str, alpha:float):
     b = 2 * np.sqrt(2 * n) * ratio * (1 - ratio)
     p_value = erfc(a / b)
 
-    if p_value > alpha:
-        return "All good chief, the sequence is pseudorandom."
-
-    return "Test failed, the sequence is NOT pseudorandom."
+    for widgets in self.main_frame.winfo_children():
+        widgets.destroy()
+    output_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
+    output_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
+    output_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
+    out = "Null Hypothesis (H0):\nThe generated binary sequence is pseudo-random\n"
+    out += "Alternative Hypothesis (HA):\nThe generated binary sequence is not pseudo-random\n\n"
+    out += "Significance level: " + str(alpha) + "\n\n"
+    out += "P-value: " + str(p_value) + "\n\n"
+    out += "Hypothesis check:\n"
+    result = ""
+    if nr1 >= nr2:
+        out += "The monobit test failed, therefore the Runs algorithm stops.\n\n"
+        result += "H0 is rejected\nHA is accepted"
+    else:
+        if alpha < p_value:
+            out += "P-value > alpha\n\n"
+            result += "H0 is accepted\nHA is rejected"
+        else:
+            out += "P-value < alpha\n\n"
+            result += "H0 is rejected\nHA is accepted"
     
+    # afisare
+    resultLabel = customtkinter.CTkLabel(output_frame,
+                                        font=customtkinter.CTkFont(size=17, weight="normal"),
+                                        text=out)
+    resultLabel.grid(row=4, column=3,
+                            padx=20, pady=20,
+                            sticky="ew")
+    final_resultLabel = customtkinter.CTkLabel(output_frame, fg_color="red", 
+                                        font=customtkinter.CTkFont(size=25, weight="normal"),
+                                        text=result)
+    final_resultLabel.grid(row=10, column=3,
+                            padx=20, pady=20,
+                            sticky="ew")
 
