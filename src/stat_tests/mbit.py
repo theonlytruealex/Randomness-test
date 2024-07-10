@@ -76,7 +76,7 @@ def mbit(self, input_frame):
     #print(chi_squared)
     chi_squared = stats * 4 * nr_blocks
 
-    #print(chi_squared)
+    # print(chi_squared)
 
     #p_value = 1 - gammainc(nr_blocks / 2, chi_squared / 2) 
     p_value = chi2.sf(chi_squared, nr_blocks)
