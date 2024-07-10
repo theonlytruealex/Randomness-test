@@ -268,10 +268,6 @@ class App(customtkinter.CTk):
         self.generateResultsButton = customtkinter.CTkButton(input_frame,
                                             text="Generate Results", command=generate_autocorr)
         self.generateResultsButton.grid(row=4, column=5, columnspan=1, padx=20, pady=0, sticky="e")
-            
-             
-        
-        
     def serial_event(self):
 
         global file_contents
