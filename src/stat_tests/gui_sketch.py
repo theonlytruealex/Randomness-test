@@ -414,7 +414,7 @@ class App(customtkinter.CTk):
                 runs.runs(self, file_contents, alpha)
             
         
-        img = ImageTk.PhotoImage(Image.open("../../assets/runs.png").resize((650, 525)))
+        img = ImageTk.PhotoImage(Image.open("../../assets/alg_runs.png").resize((650, 525)))
         warnings.filterwarnings("ignore", category=UserWarning)
         image_runs = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="gray92")
         image_runs.grid(row=3, column=0, rowspan=8, columnspan=5, pady=20,  sticky="nsew")
