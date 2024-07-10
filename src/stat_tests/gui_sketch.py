@@ -147,7 +147,53 @@ class App(customtkinter.CTk):
         monobit.monobit(self, input_frame)
 
     def mbit_event(self):
-        pass
+        for widgets in self.main_frame.winfo_children():
+            widgets.destroy()
+        
+        input_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
+        input_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
+        input_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
+        # input_frame.grid_columnconfigure(3, weight=0)
+        
+        # alpha label
+        self.alphaLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Significance Level (α)")
+        self.alphaLabel.grid(row=2, column=0, padx=20, pady=5,sticky="w")
+
+        # alpha entry field
+        self.alphaEntry = customtkinter.CTkEntry(input_frame)
+        self.alphaEntry.grid(row=2, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
+        
+        # sequence label
+        self.bitSeqLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Bit Sequence")
+        self.bitSeqLabel.grid(row=1, column=0, padx=20, pady=5,sticky="w")
+
+        # sequence entry field
+        self.bitSeqEntry = customtkinter.CTkEntry(input_frame)
+        self.bitSeqEntry.grid(row=1, column=1, columnspan=5, padx=10, pady=5, sticky="ew")
+
+
+        # M param label
+        self.MLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Block length (M)")
+        self.MLabel.grid(row=3, column=0, padx=20, pady=5,sticky="w")
+
+        # M param entry field
+        self.MEntry = customtkinter.CTkEntry(input_frame)
+        self.MEntry.grid(row=3, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
+
+        # Generate Button
+        self.generateResultsButton = customtkinter.CTkButton(input_frame,
+                                            text="Generate Results", command=lambda: self.generateButton_mbit_event(input_frame))
+        self.generateResultsButton.grid(row=4, column=1,
+                                        columnspan=2,
+                                        padx=20, pady=20,
+                                        sticky="ew")
+        
+    def generateButton_mbit_event(self, input_frame):
+        mbit.mbit(self, input_frame)
+        
     def autocorr_event(self):
         
         global file_contents
