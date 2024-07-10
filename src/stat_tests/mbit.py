@@ -76,10 +76,12 @@ def mbit(self, input_frame):
     chi_squared = stats    
     stats *= 4 * M_param
 
-    p_value = gammainc(nr_blocks / 2, chi_squared / 2) 
-    
+    p_value = gammainc(nr_blocks / 2, chi_squared / 2)
+    print(p_value)
+    formatted_p_value = "{:.3f}".format(p_value)
+
     out_text += "The test's statistic: " + str(stats) + "\n\n"
-    out_text += "P-value: " + str(p_value) + "\n\n"
+    out_text += "P-value: " + str(formatted_p_value) + "\n\n"
     out_text += "Hypothesis check:\n"
     result = ""
     if alpha < p_value:
