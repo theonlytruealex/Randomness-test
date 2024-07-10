@@ -100,8 +100,10 @@ class App(customtkinter.CTk):
         input_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
         input_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
         input_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
-
-        img = ImageTk.PhotoImage(Image.open("../../assets/Monobit.png").resize((650, 330)))
+        
+        
+        img = customtkinter.CTkImage(light_image=Image.open("../../assets/Monobit.png"), size=(650, 330))
+        # img = ImageTk.PhotoImage(Image.open("../../assets/Monobit.png").resize((650, 330)))
         image_serial = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="gray92")
         image_serial.grid(row=3, column=0, rowspan=8, columnspan=5, pady=20,  sticky="nsew")
         image_serial.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
@@ -146,7 +148,62 @@ class App(customtkinter.CTk):
         monobit.monobit(self, input_frame)
 
     def mbit_event(self):
-        pass
+        for widgets in self.main_frame.winfo_children():
+            widgets.destroy()
+        
+        input_frame = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
+        input_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
+        input_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
+        # input_frame.grid_columnconfigure(3, weight=0)
+
+        img = customtkinter.CTkImage(light_image=Image.open("../../assets/mbit.png"), size=(600, 600))
+        # img = ImageTk.PhotoImage(Image.open("../../assets/Monobit.png").resize((650, 330)))
+        image_serial = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="gray92")
+        image_serial.grid(row=3, column=0, rowspan=8, columnspan=5, pady=20,  sticky="nsew")
+        image_serial.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
+        image_serial.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
+        lbl = customtkinter.CTkLabel(image_serial, image=img, text="")
+        lbl.grid(row=0, column=0,sticky="nsew")
+        
+        # alpha label
+        self.alphaLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Significance Level (α)")
+        self.alphaLabel.grid(row=2, column=0, padx=20, pady=5,sticky="w")
+
+        # alpha entry field
+        self.alphaEntry = customtkinter.CTkEntry(input_frame)
+        self.alphaEntry.grid(row=2, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
+        
+        # sequence label
+        self.bitSeqLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Bit Sequence")
+        self.bitSeqLabel.grid(row=1, column=0, padx=20, pady=5,sticky="w")
+
+        # sequence entry field
+        self.bitSeqEntry = customtkinter.CTkEntry(input_frame)
+        self.bitSeqEntry.grid(row=1, column=1, columnspan=5, padx=10, pady=5, sticky="ew")
+
+
+        # M param label
+        self.MLabel = customtkinter.CTkLabel(input_frame,
+                                        text="Block length (M)")
+        self.MLabel.grid(row=3, column=0, padx=20, pady=5,sticky="w")
+
+        # M param entry field
+        self.MEntry = customtkinter.CTkEntry(input_frame)
+        self.MEntry.grid(row=3, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
+
+        # Generate Button
+        self.generateResultsButton = customtkinter.CTkButton(input_frame,
+                                            text="Generate Results", command=lambda: self.generateButton_mbit_event(input_frame))
+        self.generateResultsButton.grid(row=4, column=1,
+                                        columnspan=2,
+                                        padx=20, pady=20,
+                                        sticky="ew")
+        
+    def generateButton_mbit_event(self, input_frame):
+        mbit.mbit(self, input_frame)
+
     def autocorr_event(self):
         
         global file_contents
@@ -223,11 +280,12 @@ class App(customtkinter.CTk):
                 d_param = int(d_param)  # Convert m_param to int
                 p_val = autocorrelation.autocorrelation(bit_sequence, alpha, d_param)
             else:
+                bit_sequence = file_contents
                 alpha = self.alphaEntry.get()
                 d_param = self.DEntry.get()
                 alpha = float(alpha)  # Convert alpha to float
                 d_param = int(d_param)  # Convert m_param to int
-                p_val = autocorrelation.autocorrelation(file_contents, alpha, d_param)
+                p_val = autocorrelation.autocorrelation(bit_sequence, alpha, d_param)
             
             # compute the 
             # clear frame
@@ -236,6 +294,13 @@ class App(customtkinter.CTk):
                 
             self.main_frame.grid_rowconfigure((0,1,2), weight=1)
             self.main_frame.grid_rowconfigure((3, 4, 5, 6, 7, 8, 9, 10), weight=0)
+            
+            if len(bit_sequence)-d_param < 10:
+                lbl = customtkinter.CTkLabel(self.main_frame, 
+                                             font=customtkinter.CTkFont(family="Times", size=20),
+                                             text="The test function will not have a normal distribution for n-d < 10,\nwhere n is the length of the binary sequence and d is the shift parameter.")
+                lbl.grid(row=1, column=0, columnspan=3, sticky="nwes")
+                return
             
             
             img = Image.open("../../assets/autocorr/autocorr_h.png")
@@ -253,7 +318,7 @@ class App(customtkinter.CTk):
             # render 
             img = Image.open("../../assets/autocorr/temp/1.png")
             width, height = img.size
-            image = customtkinter.CTkImage(light_image=img, size=(350, int(height / width * 350)))
+            image = customtkinter.CTkImage(light_image=img, size=(300, int(height / width * 300)))
             lbl = customtkinter.CTkLabel(self.main_frame, image=image, text="")
             lbl.grid(row=1, column=0, columnspan=3, sticky="nsew")
             
@@ -269,7 +334,6 @@ class App(customtkinter.CTk):
                                             text="Generate Results", command=generate_autocorr)
         self.generateResultsButton.grid(row=4, column=5, columnspan=1, padx=20, pady=0, sticky="e")
             
-             
         
         
     def serial_event(self):
@@ -335,7 +399,7 @@ class App(customtkinter.CTk):
         self.mParamEntry = customtkinter.CTkEntry(input_frame)
         self.mParamEntry.grid(row=3, column=1, columnspan=1, padx=10, pady=5, sticky="ew")
 
-        img = ImageTk.PhotoImage(Image.open("../../assets/serial.png").resize((650, 525)))
+        img = customtkinter.CTkImage(light_image=Image.open("../../assets/serial.png"), size=(650, 525))
         image_serial = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="gray92")
         image_serial.grid(row=3, column=0, rowspan=8, columnspan=5, pady=20,  sticky="nsew")
         image_serial.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
