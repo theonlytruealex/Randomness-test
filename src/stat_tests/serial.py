@@ -40,7 +40,7 @@ def serial(self, seq: str, alpha: float, m: int):
     if m < 3:
         serial_results(self, -1, "M too small. Please send an appropriatly sized m.")
         return
-    
+    output = ""
     # cleaning the input
     seq = "".join(c for c in seq if c == '1' or c == '0')
     n = len(seq)
@@ -48,7 +48,7 @@ def serial(self, seq: str, alpha: float, m: int):
     # We choose 32  as the cut-
     # off point because log2(32) - 2 is 3,
     # the smallest m for which we can add m-3 bits to end of the sequence
-    if n < 32:
+    if n < 16:
         serial_results(self, -1, "Sequence too short. Please send a longer sequence.")
         return
     
@@ -58,75 +58,110 @@ def serial(self, seq: str, alpha: float, m: int):
     while n_log <= n:
         n_log *= 2
         max_m += 1
-    if m > max_m:
+    if m > max_m and m > 3:
         serial_results(self, -1, "M too big. Please send an appropriatly sized m.")
         return
+    elif m > max_m:
+        output += "!!M is too small, it is allowed because the sequence is small!!\n\n"
+
     
     # test 1
-    seq = seq + seq[0:m - 3]
-    m -= 2
-    psi_2 = 0
-    for i in range(0, pow(2, m)):
-        frequency = 0
-        for j in range(0, n):
-            if i == int(seq[j:j + m], 2):
-                frequency += 1
-        frequency *= frequency
-        frequency = (frequency * 1.0) / (n * 1.0)
-        psi_2 += frequency
-    psi_2 *= pow(2, m)
-    psi_2 -= n
+    if m > 2:
+        seq = seq + seq[0:m - 3]
+        m -= 2
+        psi_2 = 0
+        for i in range(0, pow(2, m)):
+            frequency = 0
+            for j in range(0, n):
+                if i == int(seq[j:j + m], 2):
+                    frequency += 1
+            frequency *= frequency
+            frequency = (frequency * 1.0) / (n * 1.0)
+            psi_2 += frequency
+        psi_2 *= pow(2, m)
+        psi_2 -= n
 
-    # test 2
-    m += 1
-    seq += seq[m - 2]
-    psi_1 = 0
-    for i in range(0, pow(2, m)):
-        frequency = 0
-        for j in range(0, n):
-            if i == int(seq[j:j + m], 2):
-                frequency += 1
-        frequency *= frequency
-        frequency = (frequency * 1.0) / (n * 1.0)
-        psi_1 += frequency
-    psi_1 *= pow(2, m)
-    psi_1 -= n
+        # test 2
+        m += 1
+        seq += seq[m - 2]
+        psi_1 = 0
+        for i in range(0, pow(2, m)):
+            frequency = 0
+            for j in range(0, n):
+                if i == int(seq[j:j + m], 2):
+                    frequency += 1
+            frequency *= frequency
+            frequency = (frequency * 1.0) / (n * 1.0)
+            psi_1 += frequency
+        psi_1 *= pow(2, m)
+        psi_1 -= n
 
-    # test 3
-    m += 1
-    seq += seq[m - 2]
-    psi_0 = 0
-    for i in range(0, pow(2, m)):
-        frequency = 0
-        for j in range(0, n):
-            if i == int(seq[j:j + m], 2):
-                frequency += 1
-        frequency *= frequency
-        frequency = (frequency * 1.0) / (n * 1.0)
-        psi_0 += frequency
-    psi_0 *= pow(2, m)
-    psi_0 -= n
-    
+        # test 3
+        m += 1
+        seq += seq[m - 2]
+        psi_0 = 0
+        for i in range(0, pow(2, m)):
+            frequency = 0
+            for j in range(0, n):
+                if i == int(seq[j:j + m], 2):
+                    frequency += 1
+            frequency *= frequency
+            frequency = (frequency * 1.0) / (n * 1.0)
+            psi_0 += frequency
+        psi_0 *= pow(2, m)
+        psi_0 -= n
+    else:
+        psi_2 = 0
+        seq += seq[0]
+        psi_1 = 0
+        m -= 1
+        for i in range(0, pow(2, m)):
+            frequency = 0
+            for j in range(0, n):
+                if i == int(seq[j:j + m], 2):
+                    frequency += 1
+            frequency *= frequency
+            frequency = (frequency * 1.0) / (n * 1.0)
+            psi_1 += frequency
+        psi_1 *= pow(2, m)
+        psi_1 -= n
+
+        # test 3
+        m += 1
+        seq += seq[1]
+        psi_0 = 0
+        for i in range(0, pow(2, m)):
+            frequency = 0
+            for j in range(0, n):
+                if i == int(seq[j:j + m], 2):
+                    frequency += 1
+            frequency *= frequency
+            frequency = (frequency * 1.0) / (n * 1.0)
+            psi_0 += frequency
+        psi_0 *= pow(2, m)
+        psi_0 -= n
+
     stat_0 = psi_0 - psi_1
     stat_1 = psi_0 - 2 * psi_1 + psi_2
 
     p_val1 = sc.gammainc(stat_0 / 2, pow(2, m - 2))
     p_val2 =  sc.gammainc(stat_1 / 2, pow(2, m - 3))
 
+    res = 0
     if p_val1 <= alpha and p_val2 > alpha:
-        serial_results(self, 0,
-                       "P-value1 is not greater than alpha.\nThe Sequence is not pseudo-random for a significance level of\n{}\n\n".format(alpha), \
-                        p_val1, p_val2, alpha)
+        output += "P-value1 is not greater than alpha.\nThe Sequence is not pseudo-random for a significance level of\n{}\n\n".format(alpha)
+        res = 0
     elif p_val2 <= alpha and p_val1 > alpha:
-        serial_results(self, 0,
-                       "P-value2 is not greater than alpha.\nThe Sequence is not pseudo-random for a significance level of\n{}\n\n".format(alpha), \
-                        p_val1, p_val2, alpha)
+        output += "P-value2 is not greater than alpha.\nThe Sequence is not pseudo-random for a significance level of\n{}\n\n".format(alpha)
+        res = 0
     elif p_val1 <= alpha and p_val2 <= alpha:
-        serial_results(self, 0,
-                       "The p-values are not greater than alpha.\nThe Sequence is not pseudo-random for a significance level of\n{}\n\n".format(alpha), \
-                        p_val1, p_val2, alpha)
+        output += "The p-values are not greater than alpha.\nThe Sequence is not pseudo-random for a significance level of\n{}\n\n".format(alpha)
+        res = 0
     elif p_val1 > alpha and p_val2 > alpha:
-        serial_results(self, 1, "The sequence is pseudo-random for a significance level of\n{}\n\n".format(alpha), p_val1, p_val2)
+        output += "The sequence is pseudo-random for a significance level of\n{}\n\n".format(alpha)
+        res = 1
     else:
-        serial_results(self, 1, "Logical impossiblity, all's not good chief", p_val1, p_val2)
+        output += "Logical impossiblity, all's not good chief"
+        res = 1
+    serial_results(self, res, output, p_val1, p_val2, alpha)
     return
