@@ -100,14 +100,13 @@ class App(customtkinter.CTk):
         input_frame.grid(row=0, column=0, rowspan=2, columnspan=5, pady=20,  sticky="nsew")
         input_frame.grid_columnconfigure((1, 2, 3, 4, 5), weight=1)
 
-        img = ImageTk.PhotoImage(Image.open("../../assets/monobit.png").resize((680, 550)))
-        image_serial = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="transparent")
+        img = ImageTk.PhotoImage(Image.open("../../assets/Monobit.png").resize((650, 330)))
+        image_serial = customtkinter.CTkFrame(self.main_frame, corner_radius=0, fg_color="gray92")
         image_serial.grid(row=3, column=0, rowspan=8, columnspan=5, pady=20,  sticky="nsew")
         image_serial.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
         image_serial.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7), weight=1)
         lbl = customtkinter.CTkLabel(image_serial, image=img, text="")
         lbl.grid(row=0, column=0,sticky="nsew")
-
         # Significance Level Label
         self.sigLvlLabel = customtkinter.CTkLabel(input_frame,
                                         text="Significance Level")
