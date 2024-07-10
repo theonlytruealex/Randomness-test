@@ -15,7 +15,7 @@ def serial_results(self, res: int, reasoning: str, p_value1: float = 0, p_value2
         out_text = "Null Hypothesis (H0):\nThe generated binary sequence is pseudo-random\n"
         out_text += "Alternative Hypothesis (HA):\nThe generated binary sequence is not pseudo-random\n\n"
         out_text += "Significance level: " + str(alpha) + "\n\n"
-        out_text += "P-values: " + str(p_value1) + " and " +  str(p_value2) + "\n\n"
+        out_text += f"P-values: {p_value1:.3f} and {p_value2:.3f}\n\n"
         out_text += reasoning
         if res == 0:
             out_text += "H0 is rejected\nHA is accepted"
