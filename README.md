@@ -1,5 +1,5 @@
 # Randomness-test
-A program made in python with a graphic interface that verifies the randomness of a given bit-sequence using 5 different tests.
+A program made in python with a graphic interface that verifies the randomness of a given bit-sequence using 5 different tests. 
 
 
 ## FOR DEVELOPMENT
@@ -23,6 +23,11 @@ sudo apt-get install python3-tk
 ### Install customtkinter 
 ```bash
 pip install customtkinter
+```
+
+### Generate requirements.txt
+```bash
+pipreqs --force --ignore bin,etc,include,lib,lib64 ./
 ```
 
 ## Run
